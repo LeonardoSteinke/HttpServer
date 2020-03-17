@@ -1,5 +1,6 @@
 package http.server.socket;
 
+import http.server.socket.Requests.NotImplemented;
 import http.server.socket.Requests.NotFound;
 import http.server.socket.Requests.Teapot;
 import http.server.socket.Requests.ResponseStatus;
@@ -52,17 +53,21 @@ public class HTTPServerSocket {
                     System.out.println("Conectado com: " + conn.getInetAddress().getHostAddress());
                     input = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     out = conn.getOutputStream();
-                    String res = input.readLine();
-                    getDir = res.split(" ");
+                    String req = input.readLine();
+                    getDir = req.split(" ");
 
                     method = getDir[0];
                     dir = getDir[1];
+                    System.out.println("Method: " + method);
                     System.out.println("Diretório: " + dir);
                     System.out.println("-----------------------------------------");
                     if (!method.equals("GET") && !method.equals("HEAD")) {
                         doPost();
-                    } else {
+                    } else if (method.equals("GET")) {
                         doGet();
+                    } else {
+                        res = new NotImplemented();
+                        res.printFile(null, out);
                     }
                 } catch (Exception e) {
                     conn.close();
