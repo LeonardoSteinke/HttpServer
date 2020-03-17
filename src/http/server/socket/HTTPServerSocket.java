@@ -161,37 +161,30 @@ public class HTTPServerSocket {
 
                     } else {
 
-                        contentList(file, res.getContentType(file.toString()));
+                        contentList(file);
                     }
                 }
             }
         }
     }
 
-    private void contentList(File file, String content) throws IOException {
+    private void contentList(File file) throws IOException {
         String[] files = file.list();
         boolean a = false;
-        if (files.length == 1) {
-            res = new OK();
-            dir += "/" + files[0];
-            file = new File(ROOT, dir);
-            res.printFile(file, out);
-        } else {
+        for (String file1 : files) {
+            if (file1.equalsIgnoreCase("index.html")) {
+                res = new OK();
+                dir += "/" + files[0];
+                file = new File(ROOT, dir);
+                res.printFile(file, out);
+                a = true;
+            }
+        }
+        if (a == false) {
             for (String file1 : files) {
-                if (file1.equalsIgnoreCase("index.html")) {
-                    res = new OK();
-                    dir += "/" + files[0];
-                    file = new File(ROOT, dir);
-                    res.printFile(file, out);
-                    a = true;
-                }
+                out.write(("<a href='" + getDir[1] + "/" + file1 + "'>" + "<h2>" + file1 + "</h2>" + "</a>").getBytes());
             }
-            if (a == false) {
-                for (String file1 : files) {
-                    out.write(("<a href='" + getDir[1] + "/" + file1 + "'>" + "<h2>" + file1 + "</h2>" + "</a>").getBytes());
-                }
 
-            }
         }
     }
 
